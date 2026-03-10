@@ -19,10 +19,25 @@ public partial class Game : Node2D
 	
 	public override void _Ready()
 	{
-	}
+        GD.Print("Jeu démarré");
+    }
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public void Play(int x, int y)
+	{
+		// vérifier si la case est vide
+		if (board[x, y] != 0)
+		{
+            GD.Print("Case déjà occupée !");
+        }
+		else {
+				board[x, y] = currentPlayer;							// placer le jeton du joueur courant
+				turn++;													// incrémenter le compteur de tours
+                currentPlayer = (currentPlayer == 1) ? 2 : 1;           // changer de joueur
+        }
+    }
+
+    // Called every frame. 'delta' is the elapsed time since the previous frame.
+    public override void _Process(double delta)
 	{
 	}
 }
