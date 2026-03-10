@@ -1,0 +1,14 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+.import/
+
+# Visual Studio
+.vs/
+
+# .NET build files
+bin/
+obj/
+
+# temporary files
+*.tmp
