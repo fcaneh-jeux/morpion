@@ -1,47 +1,124 @@
 using Godot;
 
-public partial class Grid : Node2D
+public partial class Grid : Control
 {
-    Game game = new Game();
+	public PackedScene CellScene;
+	public Game game = new Game();
+ 	private Label turnLabel; // Variable pour le label
+	
+	public override void _Ready()
+	{
+		// Charger la scène modèle Cell.tscn
+		CellScene = GD.Load<PackedScene>("res://scenes/Cell.tscn");
+		if (CellScene == null)
+		{
+			GD.Print("Erreur : CellScene introuvable !");
+			return;
+		}
 
-    public override void _Ready()
-    {
-        GD.Print("Jeu lancé");
-    }
+//region création des cellules
+		float cellSize = 64; // correspond à Rect.Size de Cell.tscn
+		GD.Print("GRID READY");
+		// Génération automatique des cellules
+		for (int x = 0; x < Game.SIZE; x++)
+		{
+			for (int y = 0; y < Game.SIZE; y++)
+			{
+				//GD.Print($"create cell {x},{y}");
+				var cell = (Cell)CellScene.Instantiate();
+				cell.Position = new Vector2(x * cellSize, y * cellSize);
+				cell.Size = new Vector2(cellSize, cellSize);
+				cell.Name = $"Cell_{x}_{y}";
+				//GD.Print($"Create {x},{y} at {cell.Position}");
+				AddChild(cell);
+			}
+		}
+// endregion création des cellules
+		
+// region génration des lignes de démarcation 
+		// Ajouter des lignes verticales
+		for (int x = 1; x < Game.SIZE; x++)
+		{
+			var line = new Line2D();
+			line.Width = 2; // Épaisseur de la ligne
+			line.AddPoint(new Vector2(0, 0)); // Point de départ (en haut)
+			line.AddPoint(new Vector2(0, Game.SIZE * cellSize)); // Point d'arrivée (en bas)
+			line.DefaultColor = new Color(0, 0, 0); // Noir
+			line.Position = new Vector2(x * cellSize, 0); // Positionne la ligne verticale
+			AddChild(line);
+		}
 
-    public void OnCellClicked(int x, int y)
-    {
-        if (!game.Play(x, y))
-        {
-            GD.Print("Case occupée");
-            return;
-        }
+		// Ajouter des lignes horizontales
+		for (int y = 1; y < Game.SIZE; y++)
+		{
+			var line = new Line2D();
+			line.Width = 2; // Épaisseur de la ligne
+			line.AddPoint(new Vector2(0, 0)); // Point de départ (à gauche)
+			line.AddPoint(new Vector2(Game.SIZE * cellSize, 0)); // Point d'arrivée (à droite)
+			line.DefaultColor = new Color(0, 0, 0); // Noir
+			line.Position = new Vector2(0, y * cellSize); // Positionne la ligne horizontale
+			AddChild(line);
+		}
+// endregion génration des lignes de démarcation
+		turnLabel = GetNode<Label>("TurnLabel");
+		if (turnLabel == null)
+		{
+			GD.PrintErr("Erreur : TurnLabel introuvable !");
+		}
+		else
+		{
+			UpdateTurnLabel(); // Met à jour le label au démarrage
+		}	
+// region affichage joueur en cours
 
-        UpdateCellVisual(x, y);
 
-        if (game.CheckVictory(x, y))
-        {
-            GD.Print($"Victoire joueur {game.currentPlayer}");
-            return;
-        }
+// endregion affichage joueur en cours
 
-        if (game.IsDraw())
-        {
-            GD.Print("Match nul");
-            return;
-        }
+		GD.Print("Grille générée automatiquement !");
+	}
 
-        game.NextPlayer();
-    }
+	// Méthode appelée par Cell quand on clique dessus
+	public void OnCellClicked(int x, int y)
+	{
+		if (!game.Play(x, y))
+		{
+			GD.Print("Case occupée !");
+			return;
+		}
 
-    void UpdateCellVisual(int x, int y)
-    {
-        var cell = GetNode<ColorRect>($"Cell_{x}_{y}");
+		UpdateCellVisual(x, y);
 
-        if (game.board[x, y] == 1)
-            cell.Color = new Color(1, 0, 0);
+		if (game.CheckVictory(x, y))
+		{
+			GD.Print($"Victoire joueur {game.currentPlayer} !");
+			return;
+		}
 
-        if (game.board[x, y] == 2)
-            cell.Color = new Color(0, 0, 1);
-    }
+		if (game.IsDraw())
+		{
+			GD.Print("Match nul !");
+			return;
+		}
+
+		game.NextPlayer();
+	}
+
+	private void UpdateCellVisual(int x, int y)
+	{
+		var cell = GetNode<Cell>($"Cell_{x}_{y}");
+		if (game.board[x, y] == 1)
+			cell.Color = new Color(1, 0, 0); // rouge joueur 1
+		else if (game.board[x, y] == 2)
+			cell.Color = new Color(0, 0, 1); // bleu joueur 2
+	}
+	
+	private void UpdateTurnLabel()
+	{	
+		GD.Print(turnLabel);
+		if (turnLabel != null)
+		{
+			turnLabel.Text = $"Tour du joueur : {game.currentPlayer}";
+			GD.Print(turnLabel);
+		}
+	}
 }

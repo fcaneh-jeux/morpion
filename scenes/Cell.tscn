@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://ovplnymv7txp"]
+
+[ext_resource type="Script" uid="uid://c8bt67kgq466p" path="res://scripts/Cell.cs" id="1_rd428"]
+
+[node name="ColorRect" type="ColorRect" unique_id=1895455923]
+offset_right = 64.0
+offset_bottom = 64.0
+color = Color(0.6955032, 0.6955031, 0.6955031, 1)
+script = ExtResource("1_rd428")
