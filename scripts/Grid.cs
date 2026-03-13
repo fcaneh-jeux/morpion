@@ -24,12 +24,10 @@ public partial class Grid : Control
 		{
 			for (int y = 0; y < Game.SIZE; y++)
 			{
-				//GD.Print($"create cell {x},{y}");
 				var cell = (Cell)CellScene.Instantiate();
 				cell.Position = new Vector2(x * cellSize, y * cellSize);
 				cell.Size = new Vector2(cellSize, cellSize);
 				cell.Name = $"Cell_{x}_{y}";
-				//GD.Print($"Create {x},{y} at {cell.Position}");
 				AddChild(cell);
 			}
 		}
@@ -101,6 +99,7 @@ public partial class Grid : Control
 		}
 
 		game.NextPlayer();
+		UpdateTurnLabel();
 	}
 
 	private void UpdateCellVisual(int x, int y)
@@ -114,11 +113,9 @@ public partial class Grid : Control
 	
 	private void UpdateTurnLabel()
 	{	
-		GD.Print(turnLabel);
 		if (turnLabel != null)
 		{
 			turnLabel.Text = $"Tour du joueur : {game.currentPlayer}";
-			GD.Print(turnLabel);
 		}
 	}
 }
