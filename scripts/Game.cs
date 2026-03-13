@@ -2,89 +2,89 @@ using System;
 
 public class Game
 {
-    public const int SIZE = 3;
+	public const int SIZE = 3;
 
-    // 0 = vide
-    // 1 = joueur 1
-    // 2 = joueur 2
-    public int[,] board = new int[SIZE, SIZE];
+	// 0 = vide
+	// 1 = joueur 1
+	// 2 = joueur 2
+	public int[,] board = new int[SIZE, SIZE];
 
-    public int currentPlayer = 1;
-    public int turn = 0;
+	public int currentPlayer = 1;
+	public int turn = 0;
 
-    static readonly (int, int)[] DIRECTIONS =
-    {
-        (1,0),
-        (0,1),
-        (1,1),
-        (1,-1)
-    };
+	static readonly (int, int)[] DIRECTIONS =
+	{
+		(1,0),
+		(0,1),
+		(1,1),
+		(1,-1)
+	};
 
-    public bool Play(int x, int y)
-    {
-        if (board[x, y] != 0)
-            return false;
+	public bool Play(int x, int y)
+	{
+		if (board[x, y] != 0)
+			return false;
 
-        board[x, y] = currentPlayer;
-        turn++;
+		board[x, y] = currentPlayer;
+		turn++;
 
-        return true;
-    }
+		return true;
+	}
 
-    public void NextPlayer()
-    {
-        currentPlayer = currentPlayer == 1 ? 2 : 1;
-    }
+	public void NextPlayer()
+	{
+		currentPlayer = currentPlayer == 1 ? 2 : 1;
+	}
 
-    public bool IsDraw()
-    {
-        return turn == SIZE * SIZE;
-    }
+	public bool IsDraw()
+	{
+		return turn == SIZE * SIZE;
+	}
 
-    public bool CheckVictory(int x, int y)
-    {
-        int player = board[x, y];
+	public bool CheckVictory(int x, int y)
+	{
+		int player = board[x, y];
 
-        foreach (var (dx, dy) in DIRECTIONS)
-        {
-            int count = 1;
+		foreach (var (dx, dy) in DIRECTIONS)
+		{
+			int count = 1;
 
-            count += Count(player, x, y, dx, dy);
-            count += Count(player, x, y, -dx, -dy);
+			count += Count(player, x, y, dx, dy);
+			count += Count(player, x, y, -dx, -dy);
 
-            if (count >= SIZE)
-                return true;
-        }
+			if (count >= SIZE)
+				return true;
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    int Count(int player, int x, int y, int dx, int dy)
-    {
-        int count = 0;
+	int Count(int player, int x, int y, int dx, int dy)
+	{
+		int count = 0;
 
-        int cx = x + dx;
-        int cy = y + dy;
+		int cx = x + dx;
+		int cy = y + dy;
 
-        while (
-            cx >= 0 && cx < SIZE &&
-            cy >= 0 && cy < SIZE &&
-            board[cx, cy] == player
-        )
-        {
-            count++;
+		while (
+			cx >= 0 && cx < SIZE &&
+			cy >= 0 && cy < SIZE &&
+			board[cx, cy] == player
+		)
+		{
+			count++;
 
-            cx += dx;
-            cy += dy;
-        }
+			cx += dx;
+			cy += dy;
+		}
 
-        return count;
-    }
+		return count;
+	}
 
-    public void Reset()
-    {
-        board = new int[SIZE, SIZE];
-        currentPlayer = 1;
-        turn = 0;
-    }
+	public void Reset()
+	{
+		board = new int[SIZE, SIZE];
+		currentPlayer = 1;
+		turn = 0;
+	}
 }
