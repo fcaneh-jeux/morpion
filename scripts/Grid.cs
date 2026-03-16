@@ -5,7 +5,9 @@ public partial class Grid : Control
 	public PackedScene CellScene;
 	public Game game = new Game();
  	private Label turnLabel; // Variable pour le label
-	
+	private Button resetButton; // Variable pour le bouton de réinitialisation
+
+
 	public override void _Ready()
 	{
 // Charger la scène modèle Cell.tscn
@@ -71,6 +73,11 @@ public partial class Grid : Control
 		}
 		#endregion affichage joueur en cours
 
+		#region button de réinitialisation
+		resetButton = GetNode<Button>("ResetButton");
+		resetButton.Pressed += OnResetPressed;
+		#endregion button de réinitialisation
+
 		GD.Print("Grille générée automatiquement !");
 	}
 
@@ -122,5 +129,18 @@ public partial class Grid : Control
 		{
 			turnLabel.Text = $"Tour du joueur : {game.currentPlayer}";
 		}
+	}
+
+	private void OnResetPressed()
+	{
+		game.Reset(); // Réinitialise le jeu
+		foreach (var child in GetChildren())
+		{
+			if (child is Cell cell)
+			{
+				cell.Color = cell.Reset();
+			}
+		}
+		UpdateTurnLabel(); // Met à jour le label du tour
 	}
 }
