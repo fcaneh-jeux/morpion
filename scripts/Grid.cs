@@ -8,7 +8,7 @@ public partial class Grid : Control
 	
 	public override void _Ready()
 	{
-		// Charger la scène modèle Cell.tscn
+// Charger la scène modèle Cell.tscn
 		CellScene = GD.Load<PackedScene>("res://scenes/Cell.tscn");
 		if (CellScene == null)
 		{
@@ -16,7 +16,7 @@ public partial class Grid : Control
 			return;
 		}
 
-//region création des cellules
+		#region création des cellules
 		float cellSize = 64; // correspond à Rect.Size de Cell.tscn
 		GD.Print("GRID READY");
 		// Génération automatique des cellules
@@ -31,9 +31,9 @@ public partial class Grid : Control
 				AddChild(cell);
 			}
 		}
-// endregion création des cellules
-		
-// region génration des lignes de démarcation 
+		#endregion création des cellules
+
+		#region génration des lignes de démarcation 
 		// Ajouter des lignes verticales
 		for (int x = 1; x < Game.SIZE; x++)
 		{
@@ -57,7 +57,9 @@ public partial class Grid : Control
 			line.Position = new Vector2(0, y * cellSize); // Positionne la ligne horizontale
 			AddChild(line);
 		}
-// endregion génration des lignes de démarcation
+		#endregion génration des lignes de démarcation
+		
+		#region affichage joueur en cours
 		turnLabel = GetNode<Label>("TurnLabel");
 		if (turnLabel == null)
 		{
@@ -66,11 +68,8 @@ public partial class Grid : Control
 		else
 		{
 			UpdateTurnLabel(); // Met à jour le label au démarrage
-		}	
-// region affichage joueur en cours
-
-
-// endregion affichage joueur en cours
+		}
+		#endregion affichage joueur en cours
 
 		GD.Print("Grille générée automatiquement !");
 	}
@@ -78,6 +77,12 @@ public partial class Grid : Control
 	// Méthode appelée par Cell quand on clique dessus
 	public void OnCellClicked(int x, int y)
 	{
+		if(game.IsGameOver)
+		{
+			GD.Print("La partie est terminée. Veuillez redémarrer pour jouer à nouveau.");
+			return;
+		}
+
 		if (!game.Play(x, y))
 		{
 			GD.Print("Case occupée !");

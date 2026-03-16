@@ -11,6 +11,8 @@ public class Game
 
 	public int currentPlayer = 1;
 	public int turn = 0;
+	private bool isGameOver = false;
+	public bool IsGameOver => isGameOver;
 
 	static readonly (int, int)[] DIRECTIONS =
 	{
@@ -22,11 +24,31 @@ public class Game
 
 	public bool Play(int x, int y)
 	{
+		// vérifier si la partie est terminée pour éviter de jouer après la fin du jeu
+		if (isGameOver) 
+			return false;
+
+		// vérifier si la case est déjà occupée
 		if (board[x, y] != 0)
 			return false;
 
+		// jouer le coup
 		board[x, y] = currentPlayer;
 		turn++;
+
+		// vérifier victoire
+		if (CheckVictory(x, y))
+		{
+			isGameOver = true;
+			return true;
+		}
+
+		// vérifier match nul
+		if (turn == SIZE * SIZE)
+		{
+			isGameOver = true;
+			return true;
+		}
 
 		return true;
 	}
@@ -86,5 +108,6 @@ public class Game
 		board = new int[SIZE, SIZE];
 		currentPlayer = 1;
 		turn = 0;
+		isGameOver = false;
 	}
 }
