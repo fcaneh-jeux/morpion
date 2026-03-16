@@ -41,4 +41,9 @@ public partial class Cell : ColorRect
 			}
 		}
 	}
+
+	public Color Reset()
+	{
+		return Color = new Color(0.69f, 0.69f, 0.69f); // Couleur grise de départ
+	}
 }
