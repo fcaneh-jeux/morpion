@@ -119,17 +119,39 @@ public class Game
 		isGameOver = false;
 	}
 
-	public (int, int) GetAIMove()
-	{
-		for (int x = 0; x < SIZE; x++)
-		{
-			for (int y = 0; y < SIZE; y++)
-			{
-				if (board[x, y] == 0)
-					return (x, y);
-			}
-		}
+    public (int, int) GetAIMove()
+    {
+        // essayer de gagner
+        for (int x = 0; x < SIZE; x++)
+        {
+            for (int y = 0; y < SIZE; y++)
+            {
+                if (board[x, y] == 0)
+                {
+                    // simule le coup
+                    board[x, y] = currentPlayer;
 
-		return (-1, -1); // sécurité en cas de plateau plein ou partie terminée
-	}
+                    if (CheckVictory(x, y))
+                    {
+                        board[x, y] = 0; // remise à zero après vérification
+                        return (x, y);
+                    }
+
+                    board[x, y] = 0; // remise à zero après vérification
+                }
+            }
+        }
+
+        // si pas de victiore, coup random sur la première case vide trouvée
+        for (int x = 0; x < SIZE; x++)
+        {
+            for (int y = 0; y < SIZE; y++)
+            {
+                if (board[x, y] == 0)
+                    return (x, y);
+            }
+        }
+
+        return (-1, -1);
+    }
 }
