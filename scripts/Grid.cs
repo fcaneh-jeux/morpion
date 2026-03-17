@@ -1,4 +1,5 @@
 using Godot;
+using static Game;
 
 public partial class Grid : Control
 {
@@ -78,6 +79,8 @@ public partial class Grid : Control
 		resetButton.Pressed += OnResetPressed;
 		#endregion button de réinitialisation
 
+		game.Mode = GameMode.PlayerVsAI;
+
 		GD.Print("Grille générée automatiquement !");
 	}
 
@@ -112,6 +115,17 @@ public partial class Grid : Control
 
 		game.NextPlayer();
 		UpdateTurnLabel();
+
+		if (game.Mode == GameMode.PlayerVsAI && game.currentPlayer == 2)
+		{
+			var (aiX, aiY) = game.GetAIMove();
+
+			// sécurité
+			if (aiX != -1)
+			{
+				OnCellClicked(aiX, aiY);
+			}
+		}
 	}
 
 	private void UpdateCellVisual(int x, int y)

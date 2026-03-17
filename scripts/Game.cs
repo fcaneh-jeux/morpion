@@ -22,6 +22,14 @@ public class Game
 		(1,-1)
 	};
 
+	public enum GameMode
+	{
+		PlayerVsPlayer,
+		PlayerVsAI
+	}
+
+	public GameMode Mode = GameMode.PlayerVsPlayer;
+
 	public bool Play(int x, int y)
 	{
 		// vérifier si la partie est terminée pour éviter de jouer après la fin du jeu
@@ -109,5 +117,19 @@ public class Game
 		currentPlayer = 1;
 		turn = 0;
 		isGameOver = false;
+	}
+
+	public (int, int) GetAIMove()
+	{
+		for (int x = 0; x < SIZE; x++)
+		{
+			for (int y = 0; y < SIZE; y++)
+			{
+				if (board[x, y] == 0)
+					return (x, y);
+			}
+		}
+
+		return (-1, -1); // sécurité en cas de plateau plein ou partie terminée
 	}
 }
