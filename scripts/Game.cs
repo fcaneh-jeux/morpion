@@ -119,9 +119,32 @@ public class Game
 		isGameOver = false;
 	}
 
-    public (int, int) GetAIMove()
-    {
-        // essayer de gagner
+	public (int, int) GetAIMove()
+	{
+		// essayer de gagner
+		for (int x = 0; x < SIZE; x++)
+		{
+			for (int y = 0; y < SIZE; y++)
+			{
+				if (board[x, y] == 0)
+				{
+					// simule le coup
+					board[x, y] = currentPlayer;
+
+					if (CheckVictory(x, y))
+					{
+						board[x, y] = 0; // remise à zero après vérification
+						return (x, y);
+					}
+
+					board[x, y] = 0; // remise à zero après vérification
+				}
+			}
+		}
+
+		// essayer de contrer l'adversaire
+		var opponent = currentPlayer == 1 ? 2 : 1;
+
         for (int x = 0; x < SIZE; x++)
         {
             for (int y = 0; y < SIZE; y++)
@@ -129,7 +152,7 @@ public class Game
                 if (board[x, y] == 0)
                 {
                     // simule le coup
-                    board[x, y] = currentPlayer;
+                    board[x, y] = opponent;
 
                     if (CheckVictory(x, y))
                     {
@@ -144,14 +167,14 @@ public class Game
 
         // si pas de victiore, coup random sur la première case vide trouvée
         for (int x = 0; x < SIZE; x++)
-        {
-            for (int y = 0; y < SIZE; y++)
-            {
-                if (board[x, y] == 0)
-                    return (x, y);
-            }
-        }
+		{
+			for (int y = 0; y < SIZE; y++)
+			{
+				if (board[x, y] == 0)
+					return (x, y);
+			}
+		}
 
-        return (-1, -1);
-    }
+		return (-1, -1);
+	}
 }
