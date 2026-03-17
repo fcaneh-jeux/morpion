@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 public class Game
 {
@@ -21,6 +22,14 @@ public class Game
 		(1,1),
 		(1,-1)
 	};
+
+	public enum GameMode
+	{
+		PlayerVsPlayer,
+		PlayerVsAI
+	}
+
+	public GameMode Mode = GameMode.PlayerVsPlayer;
 
 	public bool Play(int x, int y)
 	{
@@ -110,4 +119,57 @@ public class Game
 		turn = 0;
 		isGameOver = false;
 	}
+
+	public (int, int) GetAIMove()
+	{
+		(int, int) movePlayed;
+		
+		// essayer de gagner
+		movePlayed = TestIAMove(currentPlayer);
+		if (movePlayed != (-1, -1))
+			return movePlayed;
+
+		// essayer de contrer l'adversaire
+        var opponent = currentPlayer == 1 ? 2 : 1;
+
+        movePlayed = TestIAMove(opponent);
+        if (movePlayed != (-1, -1))
+            return movePlayed;
+
+        // si pas de victiore, coup random sur la première case vide trouvée
+        for (int x = 0; x < SIZE; x++)
+		{
+			for (int y = 0; y < SIZE; y++)
+			{
+				if (board[x, y] == 0)
+					return (x, y);
+			}
+		}
+
+		return (-1, -1);
+	}
+
+	private (int, int) TestIAMove(int playerOnTest)
+	{
+        for (int x = 0; x < SIZE; x++)
+        {
+            for (int y = 0; y < SIZE; y++)
+            {
+                if (board[x, y] == 0)
+                {
+                    // simule le coup
+                    board[x, y] = playerOnTest;
+
+                    if (CheckVictory(x, y))
+                    {
+                        board[x, y] = 0; // remise à zero après vérification
+                        return (x, y);
+                    }
+
+                    board[x, y] = 0; // remise à zero après vérification
+                }
+            }
+        }
+        return (-1, -1);
+    }
 }
