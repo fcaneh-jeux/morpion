@@ -133,7 +133,7 @@ public class Game
         var opponent = currentPlayer == 1 ? 2 : 1;
 
         movePlayed = TestIAMove(opponent);
-        if (movePlayed != (-1, -1))
+        if (movePlayed.Item1 != -1)
             return movePlayed;
 
         // si pas de victiore, coup random sur la première case vide trouvée
@@ -155,19 +155,16 @@ public class Game
         {
             for (int y = 0; y < SIZE; y++)
             {
-                if (board[x, y] == 0)
-                {
-                    // simule le coup
-                    board[x, y] = playerOnTest;
+                if (board[x, y] != 0)
+					continue;
+				
+                // simule le coup
+                board[x, y] = playerOnTest;
 
-                    if (CheckVictory(x, y))
-                    {
-                        board[x, y] = 0; // remise à zero après vérification
-                        return (x, y);
-                    }
-
-                    board[x, y] = 0; // remise à zero après vérification
-                }
+				bool isWinningMove = CheckVictory(x, y);
+                board[x, y] = 0; // remise à zero après vérification
+                
+				if (isWinningMove) return (x, y);
             }
         }
         return (-1, -1);
