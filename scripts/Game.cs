@@ -31,7 +31,13 @@ public class Game
 
 	public GameMode Mode = GameMode.PlayerVsPlayer;
 
-	public bool Play(int x, int y)
+    private static readonly (int, int)[] FAVORITE_MOVES =
+	{
+		(1,1),
+		(0,0), (0,2), (2,0), (2,2)
+	};
+
+    public bool Play(int x, int y)
 	{
 		// vérifier si la partie est terminée pour éviter de jouer après la fin du jeu
 		if (isGameOver) 
@@ -126,7 +132,7 @@ public class Game
 		
 		// essayer de gagner
 		movePlayed = TestIAMove(currentPlayer);
-		if (movePlayed != (-1, -1))
+        if (movePlayed.Item1 == - 1)
 			return movePlayed;
 
 		// essayer de contrer l'adversaire
@@ -136,7 +142,12 @@ public class Game
         if (movePlayed.Item1 != -1)
             return movePlayed;
 
-        // si pas de victiore, coup random sur la première case vide trouvée
+		// essayer de jouer une case favorite
+		movePlayed = IAFavoriteMoves();
+		if (movePlayed.Item1 != -1)
+			return movePlayed;
+
+        // coup random sur la première case vide trouvée
         for (int x = 0; x < SIZE; x++)
 		{
 			for (int y = 0; y < SIZE; y++)
@@ -168,5 +179,16 @@ public class Game
             }
         }
         return (-1, -1);
+    }
+
+	private (int,int) IAFavoriteMoves()
+	{
+
+		foreach (var (x,y) in FAVORITE_MOVES)
+		{
+			if (board[x,y] == 0)
+				return (x,y);
+		}
+		return (-1, -1);
     }
 }
