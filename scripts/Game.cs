@@ -143,8 +143,13 @@ public class Game
         if (movePlayed.Item1 != -1)
             return movePlayed;
 
-        // essayer de créer une fourchette
+        // essayer de créer une fourchette pour l'IA
         movePlayed = FindForkMove(currentPlayer);
+		if (movePlayed.Item1 != -1)
+			return movePlayed;
+
+        // essayer de contrer la fourchette de l'adversaire
+		movePlayed = FindForkMove(opponent);
 		if (movePlayed.Item1 != -1)
 			return movePlayed;
 
