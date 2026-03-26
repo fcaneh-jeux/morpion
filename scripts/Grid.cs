@@ -87,47 +87,45 @@ public partial class Grid : Control
 	// Méthode appelée par Cell quand on clique dessus
 	public void OnCellClicked(int x, int y)
 	{
-		if(game.IsGameOver)
-		{
-			GD.Print("La partie est terminée. Veuillez redémarrer pour jouer à nouveau.");
+		if (game.IsGameOver)
 			return;
-		}
+
+		bool isAITurn = (game.Mode == GameMode.PlayerVsAI && game.currentPlayer == 2);
 
 		if (!game.Play(x, y))
-		{
-			GD.Print("Case occupée !");
 			return;
-		}
 
 		UpdateCellVisual(x, y);
 
 		if (game.CheckVictory(x, y))
 		{
-			GD.Print($"Victoire joueur {game.currentPlayer} !");
+			GD.Print($"Victoire joueur {game.currentPlayer}");
 			return;
 		}
 
 		if (game.IsDraw())
 		{
-			GD.Print("Match nul !");
+			GD.Print("Match nul");
 			return;
 		}
 
 		game.NextPlayer();
 		UpdateTurnLabel();
 
-		if (game.Mode == GameMode.PlayerVsAI && game.currentPlayer == 2)
+		// Si c'est le tour de l'IA, elle joue automatiquement
+		if (!isAITurn && game.Mode == GameMode.PlayerVsAI && game.currentPlayer == 2)
 		{
+			GD.Print("🤖 Tour IA");
+
 			var (aiX, aiY) = game.GetAIMove();
 
-			// sécurité
 			if (aiX != -1)
 			{
 				OnCellClicked(aiX, aiY);
 			}
 		}
 	}
-
+	
 	private void UpdateCellVisual(int x, int y)
 	{
 		var cell = GetNode<Cell>($"Cell_{x}_{y}");
@@ -144,7 +142,7 @@ public partial class Grid : Control
 			turnLabel.Text = $"Tour du joueur : {game.currentPlayer}";
 		}
 	}
-
+ 
 	private void OnResetPressed()
 	{
 		game.Reset(); // Réinitialise le jeu

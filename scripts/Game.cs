@@ -1,3 +1,4 @@
+using Godot;
 using System;
 using System.ComponentModel;
 
@@ -31,13 +32,13 @@ public class Game
 
 	public GameMode Mode = GameMode.PlayerVsPlayer;
 
-    private static readonly (int, int)[] FAVORITE_MOVES =
+	private static readonly (int, int)[] FAVORITE_MOVES =
 	{
 		(1,1),
 		(0,0), (0,2), (2,0), (2,2)
 	};
 
-    public bool Play(int x, int y)
+	public bool Play(int x, int y)
 	{
 		// vérifier si la partie est terminée pour éviter de jouer après la fin du jeu
 		if (isGameOver) 
@@ -132,7 +133,7 @@ public class Game
 		
 		// essayer de gagner
 		movePlayed = TestIAMove(currentPlayer);
-        if (movePlayed.Item1 == - 1)
+		if (movePlayed.Item1 != - 1)
 			return movePlayed;
 
 		// essayer de contrer l'adversaire
@@ -142,8 +143,13 @@ public class Game
         if (movePlayed.Item1 != -1)
             return movePlayed;
 
-		// essayer de jouer une case favorite
-		movePlayed = IAFavoriteMoves();
+        // essayer de créer une fourchette
+        movePlayed = FindForkMove(currentPlayer);
+		if (movePlayed.Item1 != -1)
+			return movePlayed;
+
+        // essayer de jouer une case favorite
+        movePlayed = IAFavoriteMoves();
 		if (movePlayed.Item1 != -1)
 			return movePlayed;
 
@@ -160,28 +166,23 @@ public class Game
 		return (-1, -1);
 	}
 
-	private (int, int) TestIAMove(int playerOnTest)
-	{
-        for (int x = 0; x < SIZE; x++)
-        {
-            for (int y = 0; y < SIZE; y++)
-            {
-                if (board[x, y] != 0)
-					continue;
-				
-                // simule le coup
-                board[x, y] = playerOnTest;
+    private (int, int) TestIAMove(int playerOnTest)
+    {
+        (int, int) winningMove = (-1, -1);
 
-				bool isWinningMove = CheckVictory(x, y);
-                board[x, y] = 0; // remise à zero après vérification
-                
-				if (isWinningMove) return (x, y);
-            }
-        }
-        return (-1, -1);
+        // Appel de SimulateWinningMove avec un callback qui capture winningMove
+        SimulateWinningMove(playerOnTest, (x, y) =>
+        {
+			if (winningMove.Item1 == -1)
+            {
+                winningMove = (x, y);
+            }            
+        });
+        return winningMove;
     }
 
-	private (int,int) IAFavoriteMoves()
+
+    private (int,int) IAFavoriteMoves()
 	{
 
 		foreach (var (x,y) in FAVORITE_MOVES)
@@ -191,4 +192,71 @@ public class Game
 		}
 		return (-1, -1);
     }
+
+    private void SimulateWinningMove(int player, Action<int, int> onWinningMove)
+    {
+        for (int x = 0; x < SIZE; x++)
+        {
+            for (int y = 0; y < SIZE; y++)
+            {
+                if (board[x, y] != 0)
+                    continue;
+                board[x, y] = player;
+
+                bool isWinning = CheckVictory(x, y);
+
+                board[x, y] = 0;
+
+                if (isWinning)
+                {
+                    onWinningMove(x, y);
+                }
+            }
+        }
+    }
+
+	/// préparation de fourchettes pour l'IA, comptage du nombre de coups gagnants possibles 
+	private int CountWinningMoves(int player)
+	{
+		int count = 0;
+
+		// Appel de SimulateWinningMove avec un callback qui incrémente le compteur à chaque coup gagnant trouvé
+		SimulateWinningMove(player, (x, y) =>
+		{
+			count++;
+		});
+
+		return count;
+	}
+
+	/// détection de fouchette : si l'IA peut créer une situation où elle a deux coups gagnants possibles au prochain tour, elle doit jouer ce coup
+	private (int, int) FindForkMove(int player)
+    {
+		// Parcours de toutes les cases du plateau pour simuler un coup de l'IA et compter le nombre de coups gagnants possibles après ce coup
+		for (int x = 0; x < SIZE; x++)
+		{
+			for (int y = 0; y < SIZE; y++)
+			{
+				if (board[x, y] != 0)
+					continue;
+
+				// simule le coup
+				board[x, y] = player;
+
+				int winningMoves = CountWinningMoves(player);
+
+				// rollback
+				board[x, y] = 0;
+				// si ce coup crée une situation où l'IA a 2 coups gagnants possibles, c'est un coup de fourchette et l'IA doit le jouer
+                if (winningMoves >= 2)
+                {
+                    return (x, y);
+                }
+            }
+        }
+
+        return (-1, -1);
+    }
+
+
 }
