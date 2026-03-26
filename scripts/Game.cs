@@ -143,12 +143,12 @@ public class Game
         if (movePlayed.Item1 != -1)
             return movePlayed;
 
-        // essayer de créer une fourchette pour l'IA
-        movePlayed = FindForkMove(currentPlayer);
+		// essayer de créer une fourchette pour l'IA
+		movePlayed = FindForkMove(currentPlayer);
 		if (movePlayed.Item1 != -1)
 			return movePlayed;
 
-        // essayer de contrer la fourchette de l'adversaire
+		// essayer de contrer la fourchette de l'adversaire
 		movePlayed = FindForkMove(opponent);
 		if (movePlayed.Item1 != -1)
 			return movePlayed;
@@ -220,22 +220,27 @@ public class Game
         }
     }
 
-	/// préparation de fourchettes pour l'IA, comptage du nombre de coups gagnants possibles 
-	private int CountWinningMoves(int player)
-	{
-		int count = 0;
+    /// préparation de fourchettes pour l'IA, comptage du nombre de coups gagnants possibles 
+    private int CountWinningMoves(int player, int testX, int testY)
+    {
+        // simuler le coup de l'IA sur la case testée
+        board[testX, testY] = player;
 
-		// Appel de SimulateWinningMove avec un callback qui incrémente le compteur à chaque coup gagnant trouvé
-		SimulateWinningMove(player, (x, y) =>
-		{
-			count++;
-		});
+        int count = 0;
 
-		return count;
-	}
+        // Appel de SimulateWinningMove avec un callback qui incrémente le compteur à chaque coup gagnant trouvé
+        SimulateWinningMove(player, (x, y) =>
+        {
+            count++;
+        });
 
-	/// détection de fouchette : si l'IA peut créer une situation où elle a deux coups gagnants possibles au prochain tour, elle doit jouer ce coup
-	private (int, int) FindForkMove(int player)
+        board[testX, testY] = 0;
+
+        return count;
+    }
+
+    /// détection de fouchette : si l'IA peut créer une situation où elle a deux coups gagnants possibles au prochain tour, elle doit jouer ce coup
+    private (int, int) FindForkMove(int player)
     {
 		// Parcours de toutes les cases du plateau pour simuler un coup de l'IA et compter le nombre de coups gagnants possibles après ce coup
 		for (int x = 0; x < SIZE; x++)
@@ -245,14 +250,9 @@ public class Game
 				if (board[x, y] != 0)
 					continue;
 
-				// simule le coup
-				board[x, y] = player;
+                int winningMoves = CountWinningMoves(player, x, y);
 
-				int winningMoves = CountWinningMoves(player);
-
-				// rollback
-				board[x, y] = 0;
-				// si ce coup crée une situation où l'IA a 2 coups gagnants possibles, c'est un coup de fourchette et l'IA doit le jouer
+                // si ce coup crée une situation où l'IA a 2 coups gagnants possibles, c'est un coup de fourchette et l'IA doit le jouer
                 if (winningMoves >= 2)
                 {
                     return (x, y);
