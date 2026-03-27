@@ -246,22 +246,20 @@ public class Game
 
 		int count = 0;
 
-        int count = 0;
+		// Appel de SimulateWinningMove avec un callback qui incrémente le compteur à chaque coup gagnant trouvé
+		SimulateWinningMove(player, (x, y) =>
+		{
+			count++;
+		});
 
-        // Appel de SimulateWinningMove avec un callback qui incrémente le compteur à chaque coup gagnant trouvé
-        SimulateWinningMove(player, (x, y) =>
-        {
-            count++;
-        });
+		board[testX, testY] = 0;
 
-        board[testX, testY] = 0;
+		return count;
+	}
 
-        return count;
-    }
-
-    /// détection de fouchette : si l'IA peut créer une situation où elle a deux coups gagnants possibles au prochain tour, elle doit jouer ce coup
-    private (int, int) FindForkMove(int player)
-    {
+	/// détection de fouchette : si l'IA peut créer une situation où elle a deux coups gagnants possibles au prochain tour, elle doit jouer ce coup
+	private (int, int) FindForkMove(int player)
+	{
 		// Parcours de toutes les cases du plateau pour simuler un coup de l'IA et compter le nombre de coups gagnants possibles après ce coup
 		for (int x = 0; x < SIZE; x++)
 		{
@@ -289,8 +287,7 @@ public class Game
 		// 🔚 cas de fin
 		if (CheckWinForPlayer(2)) return +1; // IA gagne
 		if (CheckWinForPlayer(1)) return -1; // humain gagne
-		//if (IsDraw()) return 0;
-		if (IsBoardFull()) return 0; // match nul
+		if (IsDraw()) return 0; // match nul
 
 		if (isMaximizing)
 		{
