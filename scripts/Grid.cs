@@ -115,10 +115,8 @@ public partial class Grid : Control
 		// Si c'est le tour de l'IA, elle joue automatiquement
 		if (!isAITurn && game.Mode == GameMode.PlayerVsAI && game.currentPlayer == 2)
 		{
-			GD.Print("🤖 Tour IA");
-
-			var (aiX, aiY) = game.GetAIMove();
-
+			//var (aiX, aiY) = game.GetAIMove();
+			var (aiX, aiY) = game.GetBestMoveMinimax();
 			if (aiX != -1)
 			{
 				OnCellClicked(aiX, aiY);
