@@ -25,3 +25,11 @@ offset_right = 131.0
 offset_bottom = 281.0
 text = "Reset
 "
+
+[node name="MenuButton" type="Button" parent="." unique_id=1224894401]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 300.0
+offset_right = 160.0
+offset_bottom = 331.0
+text = "Retour Menu"
