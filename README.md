@@ -63,7 +63,7 @@ Le projet sépare clairement :
 
 ## 🎮 Télécharger le jeu
 
-👉 [Télécharger Morpion v1.0](https://github.com/fcaneh-jeux/morpion/releases/download/v1.0.0/morpion_v1.zip)
+👉 [Télécharger Morpion v1.0](https://github.com/fcaneh-jeux/morpion/releases/download/v1.0.0/morpion.exe)
 
 ---
 
