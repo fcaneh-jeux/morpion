@@ -7,11 +7,16 @@ public partial class Grid : Control
 	public Game game = new Game();
  	private Label turnLabel; // Variable pour le label
 	private Button resetButton; // Variable pour le bouton de réinitialisation
+	private Button menuButton; // Variable pour le bouton de retour au menu
 
 
 	public override void _Ready()
 	{
-// Charger la scène modèle Cell.tscn
+	// Initialiser le jeu avec les paramètres sélectionnés
+		game.Mode = Game.SelectedMode;
+		game.Difficulty = Game.SelectedDifficulty;
+		
+		// Charger la scène modèle Cell.tscn
 		CellScene = GD.Load<PackedScene>("res://scenes/Cell.tscn");
 		if (CellScene == null)
 		{
@@ -79,7 +84,12 @@ public partial class Grid : Control
 		resetButton.Pressed += OnResetPressed;
 		#endregion button de réinitialisation
 
-		game.Mode = GameMode.PlayerVsAI;
+		#region button retour au menu
+		menuButton = GetNode<Button>("MenuButton");
+		menuButton.Pressed += BackMenuButtonPressed;
+
+		#endregion button retour au menu
+
 
 		GD.Print("Grille générée automatiquement !");
 	}
@@ -90,7 +100,7 @@ public partial class Grid : Control
 		if (game.IsGameOver)
 			return;
 
-		bool isAITurn = (game.Mode == GameMode.PlayerVsAI && game.currentPlayer == 2);
+		bool isAITurn = (game.Mode == Game.GameMode.PlayerVsAI && game.currentPlayer == 2);
 
 		if (!game.Play(x, y))
 			return;
@@ -113,13 +123,18 @@ public partial class Grid : Control
 		UpdateTurnLabel();
 
 		// Si c'est le tour de l'IA, elle joue automatiquement
-		if (!isAITurn && game.Mode == GameMode.PlayerVsAI && game.currentPlayer == 2)
+		if (!isAITurn && game.Mode == Game.GameMode.PlayerVsAI && game.currentPlayer == 2)
 		{
-			//var (aiX, aiY) = game.GetAIMove();
-			var (aiX, aiY) = game.GetBestMoveMinimax();
-			if (aiX != -1)
+			(int aiX, int aiY) coup;
+
+			if (game.Difficulty == Game.AIDifficulty.Hard)
+				coup = game.GetAIMove();
+			else
+				coup = game.GetBestMoveMinimax();
+			
+			if (coup.Item1 != -1)
 			{
-				OnCellClicked(aiX, aiY);
+				OnCellClicked(coup.Item1, coup.Item2);
 			}
 		}
 	}
@@ -152,5 +167,10 @@ public partial class Grid : Control
 			}
 		}
 		UpdateTurnLabel(); // Met à jour le label du tour
+	}
+
+	private void BackMenuButtonPressed()
+	{
+		GetTree().ChangeSceneToFile("res://scenes/Menu.tscn");
 	}
 }

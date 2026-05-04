@@ -6,6 +6,7 @@ using System.Linq;
 
 public class Game
 {
+	#region datas
 	public const int SIZE = 3;
 
 	// 0 = vide
@@ -31,14 +32,26 @@ public class Game
 		PlayerVsPlayer,
 		PlayerVsAI
 	}
-
 	public GameMode Mode = GameMode.PlayerVsPlayer;
+
+
+	public enum AIDifficulty
+	{
+		Hard,
+		VeryHard
+	}
+	public AIDifficulty Difficulty = AIDifficulty.Hard;
+
+	public static GameMode SelectedMode = GameMode.PlayerVsPlayer;
+	public static AIDifficulty SelectedDifficulty = AIDifficulty.Hard;
 
 	private static readonly (int, int)[] FAVORITE_MOVES =
 	{
 		(1,1),
 		(0,0), (0,2), (2,0), (2,2)
 	};
+
+	#endregion datas
 
 	public bool Play(int x, int y)
 	{
