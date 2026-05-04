@@ -111,7 +111,6 @@ Ce projet a été développé **avec l’accompagnement de ChatGPT (OpenAI)**.
 
 ## 📸 Aperçu
 
-*(Tu peux ajouter ici des screenshots du jeu)*
 
 ---
 
