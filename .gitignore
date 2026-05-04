@@ -9,6 +9,12 @@
 # .NET build files
 bin/
 obj/
+.mono/
 
 # temporary files
 *.tmp
+
+# Builds
+*.exe
+*.pck
+*.dll
